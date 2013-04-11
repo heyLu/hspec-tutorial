@@ -30,8 +30,13 @@ spec = do
     it "responds with HTTP status 200" $ do
       get "/" `shouldRespondWith` 200
 
-    it "says 'Hello!'" $ do
-      (body <$> get "/") `shouldReturn` "{\"body\":\"Hello!\"}"
+    it "returns the service name" $ do
+      r <- get "/"
+      body r `shouldContain` "\"name\":\"time-service\""
+
+    it "returns the service version" $ do
+      r <- get "/"
+      body r `shouldContain` "\"version\":\"0.1.0\""
 
   context "when given an invalid request path" $ do
     it "responds with HTTP status 404" $ do

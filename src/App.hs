@@ -9,8 +9,9 @@ import           Data.Conduit.List (sourceList)
 import           Web.Scotty hiding (json)
 import           Network.Wai
 
-data Message = Message {
-  messageBody :: String
+data Service = Service {
+  serviceName    :: String
+, serviceVersion :: String
 } deriving (Eq, Show, Data, Typeable)
 
 json :: Data a => a -> ActionM ()
@@ -21,4 +22,4 @@ json data_ = do
 app :: IO Application
 app = scottyApp $ do
   get "/" $ do
-    json (Message "Hello!")
+    json (Service "time-service" "0.1.0")
