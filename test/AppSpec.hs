@@ -22,7 +22,7 @@ instance Arbitrary InvalidPath where
   arbitrary = InvalidPath . fromString <$> (listOf1 . elements) ['A'..'z']
 
 get :: ByteString -> IO SResponse
-get path = app >>= getPath path
+get path = app (readIO "2013-04-11 21:37:58 UTC") >>= getPath path
 
 spec :: Spec
 spec = do
@@ -37,6 +37,10 @@ spec = do
     it "returns the service version" $ do
       r <- get "/"
       body r `shouldContain` "\"version\":\"0.1.0\""
+
+  describe "GET /current-time.json" $ do
+    it "returns the current time" $ do
+      (body <$> get "/current-time.json") `shouldReturn` "{\"current_time\":\"2013-04-11 21:37:58 UTC\"}"
 
   context "when given an invalid request path" $ do
     it "responds with HTTP status 404" $ do
