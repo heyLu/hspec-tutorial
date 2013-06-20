@@ -22,7 +22,7 @@ json data_ = do
 data ContentType = JSON | HTML
 negotiate :: (ContentType -> ActionM a) -> ActionM a
 negotiate f = do
-  accept <- reqHeader "Accept"
+  accept <- reqHeader "Accept" `rescue` \_ -> return "text/html"
   let contentType = if accept == "application/json" then JSON else HTML
   f contentType
 

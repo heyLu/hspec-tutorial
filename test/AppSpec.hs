@@ -4,7 +4,7 @@ module AppSpec (main, spec) where
 import           Test.Hspec
 import           Test.QuickCheck
 import           Network.Wai.Test (SResponse)
-import           Data.ByteString (ByteString)
+import qualified Data.ByteString as B
 import           Control.Applicative
 
 import           Helper
@@ -13,8 +13,12 @@ import           App
 main :: IO ()
 main = hspec spec
 
-get :: ByteString -> IO SResponse
+get :: B.ByteString -> IO SResponse
 get path = app >>= getPath path
+
+instance Arbitrary B.ByteString where
+    arbitrary = fmap B.pack arbitrary `suchThat` \s ->
+                    s `notElem` ["", "/oops"] && (B.take 1 s /= "?")
 
 spec :: Spec
 spec = do
@@ -27,9 +31,9 @@ spec = do
 
   context "when given an invalid request path" $ do
     it "responds with HTTP status 404" $ do
-      pending
+      (statusCode <$> get "/invalid") `shouldReturn` 404
 
   context "when given an *arbitrary* invalid request path" $ do
     it "responds with HTTP status 404" $ do
-      property $
-        pending
+      property $ \s ->
+        (statusCode <$> get s) `shouldReturn` 404
