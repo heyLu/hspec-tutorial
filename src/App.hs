@@ -19,9 +19,18 @@ json data_ = do
   header "Content-Type" "application/json"
   (source . sourceList . return . Chunk . fromByteString . toJSON) data_
 
+data ContentType = JSON | HTML
+negotiate :: (ContentType -> ActionM a) -> ActionM a
+negotiate f = do
+  accept <- reqHeader "Accept"
+  let contentType = if accept == "application/json" then JSON else HTML
+  f contentType
+
 app :: IO Application
 app = scottyApp $ do
   get "/" $ do
     json (Message "Hello!")
   notFound $ do
-    JSON -> json (M.fromList [("error", "nothing to see here, move along.")] :: M.Map String String)
+    negotiate $ \ct -> case ct of
+      JSON -> json (M.fromList [("error", "nothing to see here, move along.")] :: M.Map String String)
+      HTML -> html "<h1>Monsters! (Ate this page)</h1><p>go away</p>"
