@@ -30,6 +30,8 @@ app :: IO Application
 app = scottyApp $ do
   get "/" $ do
     json (Message "Hello!")
+  get "/oops" $ do
+    json (Message "OOPS.")
   notFound $ do
     negotiate $ \ct -> case ct of
       JSON -> json (M.fromList [("error", "nothing to see here, move along.")] :: M.Map String String)
