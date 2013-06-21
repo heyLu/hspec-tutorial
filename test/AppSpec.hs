@@ -20,7 +20,7 @@ spec :: Spec
 spec = do
   describe "GET /" $ do
     it "responds with HTTP status 200" $ do
-      (statusCode <$> get "/") `shouldReturn` 200
+      get "/" `shouldRespondWith` 200
 
     it "says 'Hello!'" $ do
       (body <$> get "/") `shouldReturn` "{\"body\":\"Hello!\"}"
