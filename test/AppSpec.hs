@@ -27,7 +27,7 @@ spec = do
 
   context "when given an invalid request path" $ do
     it "responds with HTTP status 404" $ do
-      pending
+      get "/invalid" `shouldRespondWith` 404
 
   context "when given an *arbitrary* invalid request path" $ do
     it "responds with HTTP status 404" $ do
