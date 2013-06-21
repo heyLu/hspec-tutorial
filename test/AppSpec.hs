@@ -18,7 +18,7 @@ get path = app >>= getPath path
 
 instance Arbitrary B.ByteString where
     arbitrary = fmap B.pack arbitrary `suchThat` \s ->
-                    s `notElem` ["", "/oops"] && (B.take 1 s /= "?")
+                    s `notElem` ["", "/", "/oops"] && (B.take 1 s /= "?")
 
 spec :: Spec
 spec = do
