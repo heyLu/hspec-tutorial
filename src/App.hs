@@ -6,6 +6,8 @@ import           GHC.Generics
 import           Web.Scotty hiding (body)
 import           Network.Wai
 import           Data.List (intercalate)
+import           Data.Time (UTCTime, formatTime)
+import           System.Locale (defaultTimeLocale)
 
 data Message = Message {
   body :: String
@@ -29,8 +31,12 @@ instance ToJSON Version where
             "version" .= showVersion version
         ]
 
-app :: IO Application
-app = scottyApp $ do
+showTime t = formatTime defaultTimeLocale "%Y-%m-%d %H:%M:%S %Z" t
+
+app :: UTCTime -> IO Application
+app now = scottyApp $ do
   get "" $ json (Version "time-service" (0, 1, 0))
+  get "/current_time" . json $
+    object ["current_time" .= showTime now]
   get "/hello" $ do
     json (Message "Hello!")

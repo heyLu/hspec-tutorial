@@ -6,6 +6,7 @@ import           Test.QuickCheck
 import           Network.Wai.Test (SResponse)
 import qualified Data.ByteString.Char8 as B
 import           Control.Applicative
+import           Data.Time
 
 import           Helper
 import           App hiding (body)
@@ -14,7 +15,10 @@ main :: IO ()
 main = hspec spec
 
 get :: B.ByteString -> IO SResponse
-get path = app >>= getPath path
+get path = getCurrentTime >>= app >>= getPath path
+
+getWithTime :: UTCTime -> B.ByteString -> IO SResponse
+getWithTime time path = app time >>= getPath path
 
 newtype Path = Path B.ByteString deriving Show
 instance Arbitrary Path where
@@ -43,6 +47,18 @@ spec = do
       body `shouldContain` "name"
       body `shouldContain` "time-service"
 
+  describe "GET /current_time" $ do
+    it "responds with HTTP status 200" $ do
+      get "/current_time" `shouldRespondWith` 200
+
+  describe "GET /current_time" $ do
+    it "contains a current_time field" $ do
+      let t = UTCTime (fromGregorian 2013 6 22)
+                      (secondsToDiffTime $ 19*60*60 + 9*60 + 13)
+      body <- body <$> getWithTime t "/current_time"
+      body `shouldContain` "current_time"
+      body `shouldContain` "2013-06-22 19:09:13 UTC"
+
   describe "GET /hello" $ do
     it "says 'Hello!'" $ do
       (body <$> get "/hello") `shouldReturn` "{\"body\":\"Hello!\"}"
@@ -53,5 +69,5 @@ spec = do
 
   context "when given an *arbitrary* invalid request path" $ do
     it "responds with HTTP status 404" $ do
-      property $ \(Path p) -> p `isNoPathIn` ["", "/hello"] ==>
+      property $ \(Path p) -> p `isNoPathIn` ["", "/current_time", "/hello"] ==>
         get (p) `shouldRespondWith` 404
