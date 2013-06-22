@@ -3,9 +3,6 @@ module App where
 
 import           Data.Aeson hiding (json)
 import           GHC.Generics
-import           Data.Conduit
-import           Blaze.ByteString.Builder.ByteString (fromByteString)
-import           Data.Conduit.List (sourceList)
 import           Web.Scotty hiding (body)
 import           Network.Wai
 
