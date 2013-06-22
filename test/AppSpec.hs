@@ -36,6 +36,7 @@ spec = do
     it "responds with name and version" $ do
       (body <$> get "/") `shouldReturn` "{\"name\":\"time-service\",\"version\":\"0.1.0\"}"
 
+  describe "GET /hello" $ do
     it "says 'Hello!'" $ do
       (body <$> get "/hello") `shouldReturn` "{\"body\":\"Hello!\"}"
 
