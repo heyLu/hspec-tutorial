@@ -8,7 +8,7 @@ import qualified Data.ByteString.Char8 as B
 import           Control.Applicative
 
 import           Helper
-import           App
+import           App hiding (body)
 
 main :: IO ()
 main = hspec spec
