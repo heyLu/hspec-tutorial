@@ -6,6 +6,9 @@ import           GHC.Generics
 import           Web.Scotty hiding (body)
 import           Network.Wai
 import           Data.List (intercalate)
+import Data.Maybe (mapMaybe)
+import Text.Read (readMaybe)
+import Data.List.Split (splitWhen)
 
 data Message = Message {
   body :: String
@@ -21,6 +24,11 @@ data Version = Version {
 
 showVersion (maj, min, patch) =
     intercalate "." $ map show [maj, min, patch]
+
+parseVersion str = (maj, min, patch)
+  where [maj, min, patch] = take 3 parts
+        parts = parsed ++ repeat 0
+        parsed = mapMaybe readMaybe $ splitWhen (== '.') str
 
 instance ToJSON Version where
     toJSON (Version name version) =
