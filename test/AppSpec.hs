@@ -33,8 +33,11 @@ spec = do
     it "responds with HTTP status 200" $ do
       get "/" `shouldRespondWith` 200
 
+    it "responds with name and version" $ do
+      (body <$> get "/") `shouldReturn` "{\"name\":\"time-service\",\"version\":\"0.1.0\"}"
+
     it "says 'Hello!'" $ do
-      (body <$> get "/") `shouldReturn` "{\"body\":\"Hello!\"}"
+      (body <$> get "/hello") `shouldReturn` "{\"body\":\"Hello!\"}"
 
   context "when given an invalid request path" $ do
     it "responds with HTTP status 404" $ do
@@ -42,5 +45,5 @@ spec = do
 
   context "when given an *arbitrary* invalid request path" $ do
     it "responds with HTTP status 404" $ do
-      property $ \(Path p) -> p `isNoPathIn` [""] ==>
+      property $ \(Path p) -> p `isNoPathIn` ["", "/hello"] ==>
         get (p) `shouldRespondWith` 404

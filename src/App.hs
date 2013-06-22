@@ -15,5 +15,9 @@ instance FromJSON Message
 
 app :: IO Application
 app = scottyApp $ do
-  get "/" $ do
+  get "" $ json $ object [
+      "name" .= ("time-service" :: String),
+      "version" .= ("0.1.0" :: String)
+    ]
+  get "/hello" $ do
     json (Message "Hello!")
