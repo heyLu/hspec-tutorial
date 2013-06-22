@@ -33,8 +33,15 @@ spec = do
     it "responds with HTTP status 200" $ do
       get "/" `shouldRespondWith` 200
 
-    it "responds with name and version" $ do
-      (body <$> get "/") `shouldReturn` "{\"name\":\"time-service\",\"version\":\"0.1.0\"}"
+    it "responds with name" $ do
+      body <- body <$> get "/"
+      body `shouldContain` "version"
+      body `shouldContain` "0.1.0"
+
+    it "responds with version" $ do
+      body <- body <$> get "/"
+      body `shouldContain` "name"
+      body `shouldContain` "time-service"
 
   describe "GET /hello" $ do
     it "says 'Hello!'" $ do
